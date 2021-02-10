@@ -1,0 +1,26 @@
+                            ECOSYSTEM SIMULATOR
+
+This program aims to recreate a basic ecosistem with a food chain.
+
+
+        CREATURES
+
+There are three types of creatures: plants, rabbits and foxes, some have the
+hability to eat, drink, move, and be eaten, all of them can reproduce.
+
+Plants:
+    Plants can only repoduce and be eaten. They are the base of the food chain
+    and serve as food for the rabbits.
+
+Rabbits:
+    Rabbits can perform all the activities, they can eat, drink, be eaten,
+    move and reproduce. Rabbits eat plants and get eaten by foxes.
+
+Foxes:
+    Foxes are at the top of the food chain, they can eat, drink, move and
+    reproduce. Foxes eat rabbits.
+
+
+        PROPERTIES AND MECHANICS
+
+Each creature has its own properties that dictate how they behave.
