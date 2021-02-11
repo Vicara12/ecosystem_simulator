@@ -1,8 +1,7 @@
 #ifndef CREATURE_H_
 #define CREATURE_H_
 
-#include "ground.h"
-#include "creature.h"
+#include "terrain.h"
 
 
 
@@ -10,13 +9,15 @@ class Creature
 {
 public:
 
-    enum Type {Bunny, Fox};
+    enum Type {Plant, Bunny, Fox};
 
     Creature (const gnd::Map &terrain);
 
     virtual void actualize () = 0;
 
-    void getPos (unsigned &x, unsigned &y);
+    struct gnd::Point getPos () const;
+
+    Type getType () const;
 
 
 private:
