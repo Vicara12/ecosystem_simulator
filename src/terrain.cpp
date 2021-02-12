@@ -21,91 +21,75 @@ Terrain::Terrain (std::string terrain_source_file_path, bool creatures)
         exit(0);
     }
 
-    std::string line;
-    std::list<std::string> file_content;
-
-    // reading and parsing file data can't be done at once because the map
-    // matrix of the terrain is a vector of columns, and the text file is a
-    // vector of rows, so it first needs to be read and then parsed
-
-    // read file data
-    while (file.eof())
-    {
-        std::getline(file, line);
-
-        // check line size is consistent
-        if (not file_content.empty() and
-            file_content.front().size() != line.size())
-        {
-            std::cerr << "ERROR: terrain file path character per line is"
-                    << " inconsistent at line " << (file_content.size() + 1)
-                    << ". Aborting.\n";
-            exit(0);
-        }
-
-        file_content.push_back(line);
-    }
-
-    width_  = file_content.front().size();
-    height_ = file_content.size();
+    char cell;
+    int counter = 0;
+    
+    file >> width_ >> height_;
 
     terrain = gnd::Map(width_, std::vector<gnd::Item>(height_));
 
-    // parse file data
-    int row = 0;
-    for (auto file_line : file_content)
+    // read and parse file characters
+    while (file >> cell)
     {
-        for (int col = 0; col < file_line.size(); col++)
+        unsigned col = counter%width_;
+        unsigned row = counter/width_;
+
+        switch (cell)
         {
-            switch (file_line[col])
+            case 'g':
+                terrain[col][row] = gnd::Item::Grass;
+                break;
+
+            case 'w':
+                terrain[col][row] = gnd::Item::Water;
+                break;
+
+            case 't':
+                terrain[col][row] = gnd::Item::Tree;
+                break;
+            // if creatures == true, convert creatures to grass
+            default:
             {
-                case 'g':
-                    terrain[col][row] = gnd::Item::Grass;
-                    break;
-
-                case 'w':
-                    terrain[col][row] = gnd::Item::Water;
-                    break;
-
-                case 't':
-                    terrain[col][row] = gnd::Item::Tree;
-                    break;
-                // if creatures == true, convert creatures to grass
-                default:
+                if (creatures)
                 {
-                    if (creatures)
-                    {
-                        terrain[col][row] = gnd::Item::Grass;
-                        struct gnd::TerrainCreature creature;
+                    terrain[col][row] = gnd::Item::Grass;
+                    struct gnd::TerrainCreature creature;
 
-                        creature.pos.x = col;
-                        creature.pos.y = row;
-                        creature.character = file_line[col];
+                    creature.pos.x = col;
+                    creature.pos.y = row;
+                    creature.character = cell;
 
-                        file_creatures.push_back(creature);
-                    }
-                    else
-                    {
-                        std::cerr << "ERROR: could not parse terrain file,"
-                             << " unknown character " << terrain[col][row]
-                             << ". Aborting.\n";
-                        exit(0);
-                    }
+                    file_creatures.push_back(creature);
+                }
+                else
+                {
+                    std::cerr << "ERROR: could not parse terrain file,"
+                              << " unknown character " << cell
+                              << ". Aborting.\n";
+                    exit(0);
                 }
             }
         }
 
-        row++;
+        ++counter;
+    }
+
+    // check number of read characters is correct
+    if (counter != width_*height_)
+    {
+        std::cerr << "ERROR: unexpected number of characters, expected "
+                  << (width_*height_) << " and got " << counter << ". Aborting.\n";
+        exit(0);
     }
 }
 
 
 bool Terrain::isSand (unsigned  x, unsigned y) const
 {
-    return terrain[x+1][y] == gnd::Item::Water or
-           terrain[x-1][y] == gnd::Item::Water or
-           terrain[x][y+1] == gnd::Item::Water or
-           terrain[x][y-1] == gnd::Item::Water;
+    return (x < width_-1  and terrain[x+1][y] == gnd::Item::Water) or
+           (x > 0         and terrain[x-1][y] == gnd::Item::Water) or
+           (y < height_-1 and terrain[x][y+1] == gnd::Item::Water) or
+           (y > 0         and terrain[x][y-1] == gnd::Item::Water);
 }
 
 
