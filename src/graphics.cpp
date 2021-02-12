@@ -24,7 +24,7 @@ namespace gratr
 
         // empty crop vector means no cropping
         EntityTexture (std::string path,
-                       float scale,
+                       float scale_,
                        sf::Color alt,
                        std::vector<unsigned> crop = std::vector<unsigned>());
     };
@@ -36,23 +36,23 @@ namespace gratr
     // map with the textures of all creatures
     std::map<Creature::Type, EntityTexture> CREATURE_TEXTURES =
     {
-        {Creature::Type::Plant, EntityTexture("./textures/plant.png",
-                                              0.025, sf::Color(85, 126, 57))},
-        {Creature::Type::Bunny, EntityTexture("./textures/Bunny.png",
-                                              0.025, sf::Color(85, 126, 57))},
-        {Creature::Type::Fox,   EntityTexture("./textures/Fox.png",
-                                              0.025, sf::Color(85, 126, 57))}
+        {Creature::Type::Plant, EntityTexture("./textures/plant.png", 0.12,
+                                              sf::Color(85, 126, 57))},
+        {Creature::Type::Bunny, EntityTexture("./textures/Bunny.png", 0.025,
+                                              sf::Color(85, 126, 57))},
+        {Creature::Type::Fox,   EntityTexture("./textures/Fox.png", 0.025,
+                                              sf::Color(85, 126, 57))}
     };
 }
 
 
 
 gratr::EntityTexture::EntityTexture (std::string path,
-                                     float scale,
+                                     float scale_,
                                      sf::Color alt,
                                      std::vector<unsigned> crop)
 {
-    scale  = scale;
+    scale  = scale_;
     alt_color = alt;
 
     if (crop.empty())
@@ -150,19 +150,37 @@ void Graphics::draw (const std::list<Creature*> &creatures)
             window_.draw(*tree);
     
     sf::Sprite sprite;
+    // this rectangle is used when the texture could not be loaded
+    sf::RectangleShape auxiliar_shape(sf::Vector2f(gratr::BOX_SIZE,
+                                                   gratr::BOX_SIZE));
 
     // draw creatures
     for (auto creature : creatures)
     {
-        sprite.setTexture(gratr::CREATURE_TEXTURES[creature->getType()].texture);
-        sprite.setPosition(sf::Vector2f(gratr::LATERAL_MARGIN +
-                                          creature->getPos().x*gratr::BOX_SIZE,
-                                        gratr::LATERAL_MARGIN +
-                                          creature->getPos().y*gratr::BOX_SIZE));
-        sprite.setScale(sf::Vector2f(
-                    gratr::CREATURE_TEXTURES[creature->getType()].scale,
-                    gratr::CREATURE_TEXTURES[creature->getType()].scale));
-        window_.draw(sprite);
+        const gratr::EntityTexture &et = gratr::CREATURE_TEXTURES[creature->getType()];
+
+        if (et.loaded)
+        {
+            sprite.setTexture(et.texture);
+        
+            sprite.setPosition(sf::Vector2f(gratr::LATERAL_MARGIN +
+                                            creature->getPos().x*gratr::BOX_SIZE,
+                                            gratr::LATERAL_MARGIN +
+                                            creature->getPos().y*gratr::BOX_SIZE));
+            sprite.setScale(sf::Vector2f(et.scale, et.scale));
+
+            window_.draw(sprite);
+        }
+        else
+        {
+            auxiliar_shape.setFillColor(et.alt_color);
+            auxiliar_shape.setPosition(sf::Vector2f(gratr::LATERAL_MARGIN +
+                                creature->getPos().x*gratr::BOX_SIZE,
+                                    gratr::LATERAL_MARGIN +
+                                creature->getPos().y*gratr::BOX_SIZE));
+            
+            window_.draw(auxiliar_shape);
+        }
     }
 
     window_.display();

@@ -18,7 +18,8 @@ int main ()
 
     std::list<Creature*> creatures;
 
-    creatures.push_back(new Plant(terrain, gnd::Point(1,1)));
+    creatures.push_back(new Plant(terrain, gnd::Point(4,3)));
+    creatures.push_back(new Plant(terrain, gnd::Point(5,0)));
 
     while (window.isOpen())
     {
