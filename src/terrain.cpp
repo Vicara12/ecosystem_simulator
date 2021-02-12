@@ -53,11 +53,8 @@ Terrain::Terrain (std::string terrain_source_file_path, bool creatures)
                 if (creatures)
                 {
                     terrain[col][row] = gnd::Item::Grass;
-                    struct gnd::TerrainCreature creature;
-
-                    creature.pos.x = col;
-                    creature.pos.y = row;
-                    creature.character = cell;
+                    struct gnd::TerrainCreature creature (gnd::Point(col, row),
+                                                          cell);
 
                     file_creatures.push_back(creature);
                 }

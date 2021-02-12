@@ -10,18 +10,23 @@ namespace gnd
     typedef std::vector<std::vector<Item>> Map;
     struct Point;
     struct TerrainCreature;
+    float distance (const Point &p1, const Point &p2);
 }
 
 
 struct gnd::Point
 {
-    unsigned x, y;
+    float x, y;
+
+    Point (float x_, float y_);
 };
 
 struct gnd::TerrainCreature
 {
     struct gnd::Point pos;
     char character;
+
+    TerrainCreature (struct gnd::Point p, char c);
 };
 
 #endif

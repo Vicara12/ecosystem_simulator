@@ -4,6 +4,13 @@
 #include "terrain.h"
 
 
+/*
+
+To create a new creature build a new class, program the actualize method with
+its behaviour, init all static parameters, insert the new type in the enum and
+add it to the texture map in the gratr namespace
+
+*/
 
 class Creature
 {
@@ -11,7 +18,8 @@ public:
 
     enum Type {Plant, Bunny, Fox};
 
-    Creature (const gnd::Map &terrain);
+
+    Creature (const Terrain &terrain, Type type, gnd::Point initial_pos);
 
     virtual void actualize () = 0;
 
@@ -20,10 +28,11 @@ public:
     Type getType () const;
 
 
-private:
+protected:
 
     gnd::Point position;
-    const gnd::Map &terrain;
+    const Type type_;
+    const Terrain &terrain_;
 };
 
 
