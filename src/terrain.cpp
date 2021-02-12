@@ -31,6 +31,12 @@ Terrain::Terrain (std::string terrain_source_file_path, bool creatures)
     // read and parse file characters
     while (file >> cell)
     {
+        if (counter >= width_*height_)
+        {
+            counter++;
+            continue;
+        }
+        
         unsigned col = counter%width_;
         unsigned row = counter/width_;
 
