@@ -7,7 +7,7 @@ namespace gratr
 {
     const sf::Color GRASS_COLOR  = sf::Color( 45, 202, 111);
     const sf::Color SAND_COLOR   = sf::Color(182, 201,  50);
-    const sf::Color WATER_COLOR  = sf::Color(166, 215, 216);
+    const sf::Color WATER_COLOR  = sf::Color(123, 219, 221);
     const sf::Color BORDER_COLOR = sf::Color(  0,   0,   0);
 
     const unsigned BOX_SIZE = 40;   // box size in pixels
@@ -38,9 +38,9 @@ namespace gratr
     {
         {Creature::Type::Plant, EntityTexture("./textures/plant.png", 0.12,
                                               sf::Color(85, 126, 57))},
-        {Creature::Type::Bunny, EntityTexture("./textures/Bunny.png", 0.025,
+        {Creature::Type::Bunny, EntityTexture("./textures/bunny.png", 0.08,
                                               sf::Color(85, 126, 57))},
-        {Creature::Type::Fox,   EntityTexture("./textures/Fox.png", 0.025,
+        {Creature::Type::Fox,   EntityTexture("./textures/fox.png", 0.08,
                                               sf::Color(85, 126, 57))}
     };
 }

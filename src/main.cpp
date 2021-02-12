@@ -6,6 +6,8 @@
 #include "terrain.h"
 #include "graphics.h"
 #include "plant.h"
+#include "bunny.h"
+#include "fox.h"
 using namespace std;
 
 int main ()
@@ -18,8 +20,9 @@ int main ()
 
     std::list<Creature*> creatures;
 
-    creatures.push_back(new Plant(terrain, gnd::Point(4,3)));
+    creatures.push_back(new   Fox(terrain, gnd::Point(4,3)));
     creatures.push_back(new Plant(terrain, gnd::Point(5,0)));
+    creatures.push_back(new Bunny(terrain, gnd::Point(3,0)));
 
     while (window.isOpen())
     {
