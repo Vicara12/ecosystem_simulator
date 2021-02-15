@@ -33,6 +33,7 @@ Terrain::Terrain (unsigned width,
                                     (width%resolution != 0));
     unsigned noise_map_height = (height/resolution +
                                     (height%resolution != 0));
+    
     nm::Map noise_map;
 
     // generate a map with perlin noise
@@ -41,18 +42,18 @@ Terrain::Terrain (unsigned width,
                                        resolution,
                                        noise_map);
     
-    for (int i = 0; i < terrain[0].size(); i++)
+    for (int j = 0; j < terrain[0].size(); j++)
     {
-        for (int j = 0; j < terrain.size(); j++)
+        for (int i = 0; i < terrain.size(); i++)
         {
             if (noise_map[i][j] > qty_of_terrain/100.f)
                 terrain[i][j] = gnd::Item::Water;
         }
     }
 
-    for (int i = 0; i < terrain[0].size(); i++)
+    for (int j = 0; j < terrain[0].size(); j++)
     {
-        for (int j = 0; j < terrain.size(); j++)
+        for (int i = 0; i < terrain.size(); i++)
         {
             if (randomBool((qty_of_trees/100.f)*noise_map[i][j]) and
                     not isSand(i, j))

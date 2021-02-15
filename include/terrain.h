@@ -19,7 +19,7 @@ public:
     // between 0 and 100
     Terrain (unsigned width,
              unsigned height,
-             unsigned terrain_complexity,
+             unsigned terrain_complexity = 3,
              unsigned qty_of_terrain = 60,
              unsigned qty_of_trees = 40,
              unsigned seed = -1);
