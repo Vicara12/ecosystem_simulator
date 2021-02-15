@@ -43,13 +43,13 @@ void nm::NoiseMap::generateMap (unsigned width,
                     */
 
                     // compute doct product for each subsquare
-                    float v1 = dotProduct(vertex[i][j],
+                    double v1 = dotProduct(vertex[i][j],
                                           getVector({0,0}, w, h, resolution));
-                    float v2 = dotProduct(vertex[i+1][j],
+                    double v2 = dotProduct(vertex[i+1][j],
                                           getVector({1,0}, w, h, resolution));
-                    float v3 = dotProduct(vertex[i][j+1],
+                    double v3 = dotProduct(vertex[i][j+1],
                                           getVector({0,1}, w, h, resolution));
-                    float v4 = dotProduct(vertex[i+1][j+1],
+                    double v4 = dotProduct(vertex[i+1][j+1],
                                           getVector({1,1}, w, h, resolution));
                     
                     double n1 = fadeFunction(v1, v2, (1.f/resolution)*(w+0.5));

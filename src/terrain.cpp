@@ -1,11 +1,70 @@
 #include "terrain.h"
 
+#include <fstream>
+#include <iostream>
+#include <stdlib.h>
+#include "noisemap.h"
 
-Terrain::Terrain (unsigned width, unsigned height) :
+
+Terrain::Terrain (unsigned width,
+                  unsigned height,
+                  unsigned terrain_complexity,
+                  unsigned qty_of_terrain,
+                  unsigned qty_of_trees,
+                  unsigned seed) :
         width_(width),
-        height_(height)
+        height_(height),
+        terrain(width_, std::vector<gnd::Item>(height, gnd::Item::Grass))
 {
-    //
+    if (seed == unsigned(-1))
+        nm::NoiseMap::setRandomSeed();
+    else
+        nm::NoiseMap::setSeed(seed);
+
+    
+    nm::NoiseMap perlin_noise_generator;
+
+    // the size of the noise map must be a multiple of the resolution
+    // (terrain complexity), so we must select a value for the width equal
+    // to the smaller multiple of resolution that is greater or equal to width
+    // and same for height
+    unsigned resolution = (height > width ? height : width) / terrain_complexity;
+    unsigned noise_map_width = (width/resolution +
+                                    (width%resolution != 0));
+    unsigned noise_map_height = (height/resolution +
+                                    (height%resolution != 0));
+    nm::Map noise_map;
+
+    // generate a map with perlin noise
+    perlin_noise_generator.generateMap(noise_map_width,
+                                       noise_map_height,
+                                       resolution,
+                                       noise_map);
+    
+    for (int i = 0; i < terrain[0].size(); i++)
+    {
+        for (int j = 0; j < terrain.size(); j++)
+        {
+            if (noise_map[i][j] > qty_of_terrain/100.f)
+                terrain[i][j] = gnd::Item::Water;
+        }
+    }
+
+    for (int i = 0; i < terrain[0].size(); i++)
+    {
+        for (int j = 0; j < terrain.size(); j++)
+        {
+            if (randomBool((qty_of_trees/100.f)*noise_map[i][j]) and
+                    not isSand(i, j))
+                terrain[i][j] = gnd::Item::Tree;
+        }
+    }     
+}
+
+
+bool Terrain::randomBool (double chances)
+{
+    return double(rand())/RAND_MAX < chances;
 }
 
 
