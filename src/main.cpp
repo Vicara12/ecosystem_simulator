@@ -1,42 +1,11 @@
-#include <iostream>
-#include <SFML/Window.hpp>
-#include <SFML/Graphics.hpp>
-#include <unistd.h>
-#include <list>
-#include "terrain.h"
-#include "graphics.h"
-#include "plant.h"
-#include "bunny.h"
-#include "fox.h"
-using namespace std;
+#include "ecosystemsimulator.h"
 
-int main ()
+int main (int argc, char** argv)
 {
-    sf::RenderWindow window;
-
-    Terrain terrain("./test/terrain", false);
-
-    Graphics graphics(window, terrain);
-
-    std::list<Creature*> creatures;
-
-    creatures.push_back(new   Fox(terrain, gnd::Point(4,3)));
-    creatures.push_back(new Plant(terrain, gnd::Point(5,0)));
-    creatures.push_back(new Bunny(terrain, gnd::Point(3,0)));
-
-    while (window.isOpen())
+    while (true)
     {
-        // check all the window's events that were triggered since the last iteration of the loop
-        sf::Event event;
-        while (window.pollEvent(event))
-        {
-            // "close requested" event: we close the window
-            if (event.type == sf::Event::Closed)
-                window.close();
-        }
-
-        graphics.draw(creatures);
-
-        usleep(1e5);
+    EcosystemSimulator ecosistem_simulator(argc, argv);
+    
+    ecosistem_simulator.run();
     }
 }

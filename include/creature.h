@@ -7,8 +7,12 @@
 /*
 
 To create a new creature build a new class, program the actualize method with
-its behaviour, init all static parameters, insert the new type in the enum and
-add it to the texture map in the gratr namespace
+its behaviour, insert the new type in the enum, add it to the texture map in
+the gratr namespace with its corresponding texture and finally add it to the
+creature parser in the parseCreatures method and to the constructor available
+creatures option with its probability in the methods of the
+ecosystem simulator class (also, add more program parameters to handle them in
+the parseArguments method of the same class)
 
 */
 
