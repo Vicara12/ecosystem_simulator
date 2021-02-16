@@ -37,9 +37,20 @@ public:
 
     gnd::Item getTileType (unsigned x, unsigned y) const;
 
-    // when parsing a terrain file, it stores all found creatures in a list
-    // with the row and col it was found and the corresponding character
-    const std::list<gnd::TerrainCreature> getFileCreatures () const;
+    // returns the creatures read from the file or generated at random
+    const std::list<gnd::TerrainCreature> getCreatures () const;
+
+    // generate random position for creatures
+    // Creature vector must contain pairs with the letter code and generation
+    // density for each criature (the higher the number, the more creatures
+    // of that type that will be generated)
+    // Low complexity values cause the creatures to generate in big groups,
+    // and greater values mean smaller different groups
+    void generateCreatures (std::vector<std::pair<char,unsigned>> creatures,
+                            unsigned complexity);
+    
+    // returns true if the selected cell is grass
+    bool cellIsWalkable (unsigned x, unsigned y);
 
 private:
 
@@ -49,7 +60,7 @@ private:
 
     unsigned width_, height_;
     gnd::Map terrain;
-    std::list<gnd::TerrainCreature> file_creatures; // creatures found when
+    std::list<gnd::TerrainCreature> creature_list;  // creatures found when
                                                     // parsing terrain file
 };
 

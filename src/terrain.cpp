@@ -122,7 +122,7 @@ Terrain::Terrain (std::string terrain_source_file_path, bool creatures)
                     struct gnd::TerrainCreature creature (gnd::Point(col, row),
                                                           cell);
 
-                    file_creatures.push_back(creature);
+                    creature_list.push_back(creature);
                 }
                 else
                 {
@@ -174,7 +174,53 @@ gnd::Item Terrain::getTileType (unsigned x, unsigned y) const
 }
 
 
-const std::list<gnd::TerrainCreature> Terrain::getFileCreatures () const
+const std::list<gnd::TerrainCreature> Terrain::getCreatures () const
 {
-    return file_creatures;
+    return creature_list;
+}
+
+
+void Terrain::generateCreatures (std::vector<std::pair<char,unsigned>> creatures,
+                                 unsigned complexity)
+{
+    creature_list.clear();
+
+    nm::NoiseMap perlin_noise_generator;
+    nm::Map noise_map;
+
+    unsigned resolution = (height_ > width_ ? height_ : width_) / complexity;
+    unsigned noise_map_width = (width_/resolution +
+                                (width_%resolution != 0));
+    unsigned noise_map_height = (height_/resolution +
+                                (height_%resolution != 0));
+    
+    std::vector<std::vector<bool>> cell_occupied(width_,
+                                                 std::vector<bool>(height_,false));
+
+    for (std::pair<char,double> creature : creatures)
+    {
+        // generate a new noise map for each creature type (because if just
+        // one were used, all animals would be near each other)
+        perlin_noise_generator.generateMap(noise_map_width, noise_map_height,
+                                           resolution, noise_map);
+        
+        for (int i = 0; i < terrain.size(); i++)
+        {
+            for (int j = 0; j < terrain[0].size(); j++)
+            {
+                if (cellIsWalkable(i, j) and not cell_occupied[i][j] and
+                    randomBool(noise_map[i][j]*(creature.second/100.f)))
+                {
+                    cell_occupied[i][j] = true;
+                    gnd::Point p(i,j);
+                    creature_list.push_back(gnd::TerrainCreature(p, creature.first));
+                }
+            }
+        }
+    }
+}
+
+bool Terrain::cellIsWalkable (unsigned x, unsigned y)
+{
+    return terrain[x][y] == gnd::Item::Grass;
 }
