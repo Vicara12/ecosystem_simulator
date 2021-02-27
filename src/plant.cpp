@@ -12,3 +12,9 @@ void Plant::actualize ()
 {
     //
 }
+
+
+Plant::~Plant ()
+{
+    //
+}

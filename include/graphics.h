@@ -27,8 +27,15 @@ private:
     sf::RenderWindow &window_;
     const Terrain &terrain_;
 
+
     std::vector<std::vector<sf::RectangleShape*>> tile_grid;
     std::list<sf::Sprite*> tree_sprites;
+
+    uint box_size;
+
+    const uint default_box_size = 30;
+    const uint max_window_height = 1000;
+    const uint max_window_width  = 1750;
 };
 
 #endif

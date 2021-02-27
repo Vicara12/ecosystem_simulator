@@ -18,8 +18,8 @@ EcosystemSimulator::EcosystemSimulator (int argc, char** argv) :
         terrain_file_has_creatures (false),
         map_height (25),
         map_width (35),
-        map_complexity (3),
-        map_qty_of_terrain (60),
+        map_complexity (5),
+        map_qty_of_terrain (50),
         map_qty_of_trees (40),
         seed(-1),
         map_creature_complexity(2),
@@ -142,7 +142,7 @@ void EcosystemSimulator::run ()
 EcosystemSimulator::~EcosystemSimulator ()
 {
     delete terrain;
-
+    
     for (auto ptr : creatures)
         delete ptr;
 }

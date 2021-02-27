@@ -12,3 +12,8 @@ void Fox::actualize ()
 {
     //
 }
+
+Fox::~Fox ()
+{
+    //
+}

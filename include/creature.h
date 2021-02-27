@@ -12,7 +12,8 @@ the gratr namespace with its corresponding texture and finally add it to the
 creature parser in the parseCreatures method and to the constructor available
 creatures option with its probability in the methods of the
 ecosystem simulator class (also, add more program parameters to handle them in
-the parseArguments method of the same class)
+the parseArguments method of the same class).
+ALL CREATURES MUST HAVE A DESTRUCTOR
 
 */
 
@@ -30,6 +31,8 @@ public:
     struct gnd::Point getPos () const;
 
     Type getType () const;
+
+    virtual ~Creature ();
 
 
 protected:

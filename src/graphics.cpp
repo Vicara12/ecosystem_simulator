@@ -1,6 +1,11 @@
 #include "graphics.h"
 
 
+static unsigned min (uint a, uint b)
+{
+    return (a < b ? a : b);
+}
+
 
 // properties for the graphics (size, colors, etc)
 namespace gratr
@@ -10,56 +15,39 @@ namespace gratr
     const sf::Color WATER_COLOR  = sf::Color(123, 219, 221);
     const sf::Color BORDER_COLOR = sf::Color(  0,   0,   0);
 
-    const unsigned BOX_SIZE = 40;   // box size in pixels
     const unsigned LATERAL_MARGIN = 10; // space between the border and the map
 
     // struct used to hold info for each texture
     struct EntityTexture {
         sf::Texture texture;
         bool loaded;
-        float scale;
-        sf::Color alt_color; // color to place in case the texture doesn't laod
+        unsigned width, height; // in pixels
     
         EntityTexture() {};
 
         // empty crop vector means no cropping
-        EntityTexture (std::string path,
-                       float scale_,
-                       sf::Color alt,
-                       std::vector<unsigned> crop = std::vector<unsigned>());
+        EntityTexture (std::string path, uint width, uint height);
     };
 
     // declaration of the tree texture
-    const struct EntityTexture TREE_TEXTURE("./textures/tree.png", 0.025,
-                                            sf::Color(85, 126, 57));
+    const struct EntityTexture TREE_TEXTURE("./res/tree.png", 1600, 1600);
 
     // map with the textures of all creatures
     std::map<Creature::Type, EntityTexture> CREATURE_TEXTURES =
     {
-        {Creature::Type::Plant, EntityTexture("./textures/plant.png", 0.12,
-                                              sf::Color(85, 126, 57))},
-        {Creature::Type::Bunny, EntityTexture("./textures/bunny.png", 0.08,
-                                              sf::Color(85, 126, 57))},
-        {Creature::Type::Fox,   EntityTexture("./textures/fox.png", 0.08,
-                                              sf::Color(85, 126, 57))}
+        {Creature::Type::Plant, EntityTexture("./res/plant.png", 360, 360)},
+        {Creature::Type::Bunny, EntityTexture("./res/bunny.png", 474, 474)},
+        {Creature::Type::Fox,   EntityTexture("./res/fox.png",   474, 474)}
     };
 }
 
 
 
-gratr::EntityTexture::EntityTexture (std::string path,
-                                     float scale_,
-                                     sf::Color alt,
-                                     std::vector<unsigned> crop)
+gratr::EntityTexture::EntityTexture (std::string path, uint width, uint height)
 {
-    scale  = scale_;
-    alt_color = alt;
-
-    if (crop.empty())
-        loaded = texture.loadFromFile(path);
-    else
-        loaded = texture.loadFromFile(path, sf::IntRect(crop[0], crop[1],
-                                                        crop[2], crop[3]));
+    this->width = width;
+    this->height = height;
+    loaded = texture.loadFromFile(path, sf::IntRect(0, 0, width, height));
 
     if (not loaded)
     {
@@ -79,11 +67,20 @@ Graphics::Graphics (sf::RenderWindow &window, const Terrain &terrain) :
         tile_grid(terrain_.getWidth(),
                   std::vector<sf::RectangleShape*>(terrain_.getHeight()))
 {
+    box_size = default_box_size;
+
+    if (box_size*terrain_.getWidth() > max_window_width or
+        box_size*terrain_.getHeight() > max_window_height)
+    {
+        box_size = min(max_window_height/terrain_.getHeight(),
+                       max_window_width/terrain_.getWidth());
+    }
+
     // init window
     window_.create(sf::VideoMode(2*gratr::LATERAL_MARGIN +
-                                        terrain_.getWidth()*gratr::BOX_SIZE,
+                                        terrain_.getWidth()*box_size,
                                  2*gratr::LATERAL_MARGIN +
-                                        terrain_.getHeight()*gratr::BOX_SIZE),
+                                        terrain_.getHeight()*box_size),
                    "Ecosystem simulator");
 
     window.setVerticalSyncEnabled(true);
@@ -94,8 +91,8 @@ Graphics::Graphics (sf::RenderWindow &window, const Terrain &terrain) :
         for (int j = 0; j < terrain_.getHeight(); j++)
         {
             tile_grid[i][j] = new sf::RectangleShape(
-                                                 sf::Vector2f(gratr::BOX_SIZE,
-                                                              gratr::BOX_SIZE));
+                                                 sf::Vector2f(box_size,
+                                                              box_size));
 
             // set color
             if (terrain_.getTileType(i, j) == gnd::Item::Water)
@@ -107,8 +104,8 @@ Graphics::Graphics (sf::RenderWindow &window, const Terrain &terrain) :
             
             // set position
             tile_grid[i][j]->setPosition(sf::Vector2f(
-                            float(gratr::LATERAL_MARGIN + i*gratr::BOX_SIZE),
-                            float(gratr::LATERAL_MARGIN + j*gratr::BOX_SIZE)));
+                            float(gratr::LATERAL_MARGIN + i*box_size),
+                            float(gratr::LATERAL_MARGIN + j*box_size)));
             
             // handle trees
             if (terrain_.getTileType(i, j) == gnd::Item::Tree)
@@ -116,19 +113,21 @@ Graphics::Graphics (sf::RenderWindow &window, const Terrain &terrain) :
                 // if texture has been loaded, fill tree list
                 if (gratr::TREE_TEXTURE.loaded)
                 {
+                    double scale_x = double(box_size)/gratr::TREE_TEXTURE.width;
+                    double scale_y = double(box_size)/gratr::TREE_TEXTURE.height;
+
                     // generate, shape and locate tree stprite
                     tree_sprites.push_back(new sf::Sprite());
-                    tree_sprites.back()->setTexture(gratr::TREE_TEXTURE.texture);
+                    tree_sprites.back()->setTexture(gratr::TREE_TEXTURE.texture,
+                                                    true);
                     tree_sprites.back()->setPosition(sf::Vector2f(
-                            float(gratr::LATERAL_MARGIN + i*gratr::BOX_SIZE),
-                            float(gratr::LATERAL_MARGIN + j*gratr::BOX_SIZE)));
-                    tree_sprites.back()->setScale(sf::Vector2f(
-                                                    gratr::TREE_TEXTURE.scale,
-                                                    gratr::TREE_TEXTURE.scale));
+                            float(gratr::LATERAL_MARGIN + i*box_size),
+                            float(gratr::LATERAL_MARGIN + j*box_size)));
+                    tree_sprites.back()->setScale(sf::Vector2f( scale_x, scale_y));
                 }
-                // else just change cell color to tree color
+                // else just change cell color to green
                 else
-                    tile_grid[i][j]->setFillColor(gratr::TREE_TEXTURE.alt_color);
+                    tile_grid[i][j]->setFillColor(sf::Color::Green);
             }
         }
     }
@@ -151,8 +150,7 @@ void Graphics::draw (const std::list<Creature*> &creatures)
     
     sf::Sprite sprite;
     // this rectangle is used when the texture could not be loaded
-    sf::RectangleShape auxiliar_shape(sf::Vector2f(gratr::BOX_SIZE,
-                                                   gratr::BOX_SIZE));
+    sf::RectangleShape auxiliar_shape(sf::Vector2f(box_size, box_size));
 
     // draw creatures
     for (auto creature : creatures)
@@ -161,23 +159,26 @@ void Graphics::draw (const std::list<Creature*> &creatures)
 
         if (et.loaded)
         {
-            sprite.setTexture(et.texture);
+            double scale_x = double(box_size)/et.width;
+            double scale_y = double(box_size)/et.height;
+
+            sprite.setTexture(et.texture, true);
         
             sprite.setPosition(sf::Vector2f(gratr::LATERAL_MARGIN +
-                                            creature->getPos().x*gratr::BOX_SIZE,
+                                                creature->getPos().x*box_size,
                                             gratr::LATERAL_MARGIN +
-                                            creature->getPos().y*gratr::BOX_SIZE));
-            sprite.setScale(sf::Vector2f(et.scale, et.scale));
+                                                creature->getPos().y*box_size));
+            sprite.setScale(sf::Vector2f(scale_x, scale_y));
 
             window_.draw(sprite);
         }
         else
         {
-            auxiliar_shape.setFillColor(et.alt_color);
+            auxiliar_shape.setFillColor(sf::Color::Black);
             auxiliar_shape.setPosition(sf::Vector2f(gratr::LATERAL_MARGIN +
-                                creature->getPos().x*gratr::BOX_SIZE,
+                                creature->getPos().x*box_size,
                                     gratr::LATERAL_MARGIN +
-                                creature->getPos().y*gratr::BOX_SIZE));
+                                creature->getPos().y*box_size));
             
             window_.draw(auxiliar_shape);
         }

@@ -12,6 +12,8 @@ public:
 
     void actualize ();
 
+    ~Fox ();
+
 private:
 };
 

@@ -11,6 +11,8 @@ public:
 
     void actualize ();
 
+    ~Plant ();
+
 private:
 };
 

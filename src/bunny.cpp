@@ -12,3 +12,9 @@ void Bunny::actualize ()
 {
     //
 }
+
+
+Bunny::~Bunny ()
+{
+    //
+}

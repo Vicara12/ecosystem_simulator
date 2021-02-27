@@ -20,3 +20,8 @@ Creature::Type Creature::getType () const
 {
     return type_;
 }
+
+Creature::~Creature ()
+{
+    //
+}
