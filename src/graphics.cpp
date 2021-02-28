@@ -33,6 +33,7 @@ namespace gratr
     const struct EntityTexture TREE_TEXTURE("./res/tree.png", 1600, 1600);
 
     // map with the textures of all creatures
+    // ADD TEXTURES FOR NEW CREATURES HERE
     std::map<Creature::Type, EntityTexture> CREATURE_TEXTURES =
     {
         {Creature::Type::Plant, EntityTexture("./res/plant.png", 360, 360)},

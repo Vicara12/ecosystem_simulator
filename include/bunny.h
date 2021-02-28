@@ -8,13 +8,20 @@ class Bunny : public Creature
 {
 public:
 
-    Bunny (const Terrain &terrain, gnd::Point initial_pos);
+    // dummy creature constructor (for more info check creature class)
+    Bunny ();
+
+    // get a new Plant
+    Creature* getNewCreature (const Terrain &terrain,
+                              gnd::Point initial_pos);
 
     void actualize ();
 
     ~Bunny ();
 
 private:
+
+    Bunny (const Terrain &terrain, gnd::Point initial_pos);
 };
 
 #endif

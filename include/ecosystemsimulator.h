@@ -36,7 +36,7 @@ private:
     // terrain generation variables
     bool read_terrain_from_file;
     bool terrain_file_has_creatures;
-    std::vector<std::pair<char,unsigned>> available_creatures;
+    std::vector<std::pair<Creature*, uint>> creature_types;
 
     unsigned map_height, map_width, map_complexity;
     unsigned map_qty_of_terrain, map_qty_of_trees, seed;

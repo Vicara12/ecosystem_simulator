@@ -25,12 +25,12 @@ EcosystemSimulator::EcosystemSimulator (int argc, char** argv) :
         map_creature_complexity(2),
         map_file_path("")
 {
-    available_creatures =
+    creature_types =
     // ADD NEW CREATURES HERE
     {
-        {'p', 50},
-        {'b', 30},
-        {'f', 10}
+        {new Plant(), 50},
+        {new Bunny(), 30},
+        {new Fox(), 10}
     };
 
     parseArguments(argc, argv);
@@ -76,7 +76,15 @@ void EcosystemSimulator::readTerrainFile ()
 
 void EcosystemSimulator::generateCreatures ()
 {
-    terrain->generateCreatures(available_creatures, map_creature_complexity);
+    std::vector<std::pair<char, uint>> creature_chars(creature_types.size());
+
+    for (int i = 0; i < creature_chars.size(); i++)
+    {
+        creature_chars[i].first = creature_types[i].first->getLetter();
+        creature_chars[i].second = creature_types[i].second;
+    }
+
+    terrain->generateCreatures(creature_chars, map_creature_complexity);
 
     std::list<gnd::TerrainCreature> file_creatures = terrain->getCreatures();
         
@@ -88,30 +96,26 @@ void EcosystemSimulator::parseCreatures (const std::list<gnd::TerrainCreature> &
 {
     for (gnd::TerrainCreature creature : unparsed_creatures)
     {
-        switch (creature.character)
+        unsigned pos = 0;
+
+        // search for a criature with the same letter than the one found
+        while (pos < creature_types.size() and
+               creature.character != creature_types[pos].first->getLetter())
         {
-            case 'p':
-            {
-                creatures.push_back(new Plant(*terrain, creature.pos));
-                break;
-            }
-            case 'b':
-            {
-                creatures.push_back(new Bunny(*terrain, creature.pos));
-                break;
-            }
-            case 'f':
-            {
-                creatures.push_back(new Fox(*terrain, creature.pos));
-                break;
-            }
-            // ADD NEW CREATURES HERE
-            default:
-            {
-                std::cerr << "ERROR: could not parse creature "
-                    << creature.character << " at position " << creature.pos.x
-                    << "x " << creature.pos.y << "y. Continuing.\n";
-            }
+            pos++;
+        }
+
+        // if creature not found
+        if (pos == creature_types.size())
+        {
+            std::cerr << "ERROR: could not parse creature "
+                << creature.character << " at position " << creature.pos.x
+                << "x " << creature.pos.y << "y. Continuing.\n";
+        }
+        // if found get a new creature of that type and add it to the list
+        else
+        {
+            creatures.push_back(creature_types[pos].first->getNewCreature(*terrain, creature.pos));
         }
     }
 }
