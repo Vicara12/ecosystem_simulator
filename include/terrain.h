@@ -49,8 +49,16 @@ public:
     void generateCreatures (std::vector<std::pair<char,unsigned>> creatures,
                             unsigned complexity);
     
-    // returns true if the selected cell is grass
-    bool cellIsWalkable (unsigned x, unsigned y);
+    // returns true if the selected cell is free
+    bool cellIsWalkable (unsigned x, unsigned y) const;
+
+    // set position at x y as occupied by a creature
+    // returns wether the creature could be placed there
+    bool placeCreature (unsigned x, unsigned y);
+
+    // move creature from old_p to new_p
+    // returns wether the creature could be placed there
+    bool moveCreature (gnd::Point old_p, gnd::Point new_p);
 
 private:
 
@@ -62,6 +70,7 @@ private:
     gnd::Map terrain;
     std::list<gnd::TerrainCreature> creature_list;  // creatures found when
                                                     // parsing terrain file
+    std::vector<std::vector<bool>> free_space;
 };
 
 #endif

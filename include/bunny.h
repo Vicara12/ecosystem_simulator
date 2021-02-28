@@ -12,16 +12,16 @@ public:
     Bunny ();
 
     // get a new Plant
-    Creature* getNewCreature (const Terrain &terrain,
+    Creature* getNewCreature (Terrain &terrain,
                               gnd::Point initial_pos);
 
-    void actualize ();
+    void actualize (unsigned long iteration);
 
     ~Bunny ();
 
 private:
 
-    Bunny (const Terrain &terrain, gnd::Point initial_pos);
+    Bunny (Terrain &terrain, gnd::Point initial_pos);
 };
 
 #endif

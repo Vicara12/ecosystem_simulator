@@ -2,25 +2,25 @@
 
 
 Creature::Creature (char letter) :
+    terrain_(NULL),
     position(0,0),
     dummy_creature(true),
     LETTER(letter),
-    type_(Type::Plant),
-    terrain_(NULL)
+    type_(Type::Plant)
 {
     //
 }
 
 
-Creature::Creature (const Terrain &terrain,
+Creature::Creature (Terrain &terrain,
                     Type type,
                     gnd::Point initial_pos,
                     char letter) :
+    terrain_(&terrain),
     position(initial_pos),
     dummy_creature(false),
     LETTER(letter),
-    type_(type),
-    terrain_(&terrain)
+    type_(type)
 {
     //
 }
@@ -60,4 +60,15 @@ char Creature::getLetter () const
 const char* Creature::DummyCreature::what () const throw ()
 {
     return "attempted to actualize a dummy creature";
+}
+
+
+bool Creature::changePos (gnd::Point new_p)
+{
+    if (not terrain_->cellIsWalkable(new_p.x, new_p.y))
+        return false;
+    
+    terrain_->moveCreature(position, new_p);
+    position = new_p;
+    return true;
 }

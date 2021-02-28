@@ -8,21 +8,21 @@ Fox::Fox () :
 }
 
 
-Creature* Fox::getNewCreature (const Terrain &terrain,
+Creature* Fox::getNewCreature (Terrain &terrain,
                                gnd::Point initial_pos)
 {
     return new Fox(terrain, initial_pos);
 }
 
 
-Fox::Fox (const Terrain &terrain, gnd::Point initial_pos) :
+Fox::Fox (Terrain &terrain, gnd::Point initial_pos) :
         Creature(terrain, Creature::Type::Fox, initial_pos, 'f')
 {
     //
 }
 
 
-void Fox::actualize ()
+void Fox::actualize (unsigned long iteration)
 {
     checkDummy();
 }

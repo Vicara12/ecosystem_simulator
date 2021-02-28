@@ -33,10 +33,10 @@ public:
     Creature (char letter);
 
     // If this method gets called from a dummy creature, an exception is raised
-    virtual void actualize () = 0;
+    virtual void actualize (unsigned long iteration) = 0;
 
     // get a real creature
-    virtual Creature* getNewCreature (const Terrain &terrain,
+    virtual Creature* getNewCreature (Terrain &terrain,
                                       gnd::Point initial_pos) = 0;
 
     struct gnd::Point getPos () const;
@@ -50,20 +50,29 @@ public:
 
 protected:
 
-    Creature (const Terrain &terrain,
+    Creature (Terrain &terrain,
               Type type,
               gnd::Point initial_pos,
               char letter);
+    
+    bool changePos (gnd::Point new_p);
 
     // if creature is dummy, raises an exception
     void checkDummy () const;
 
-    gnd::Point position;
-    bool dummy_creature; // true if the creature was created with the normal
+
+    Terrain *terrain_;
+
+
+private:
+
+  
+  gnd::Point position;
+  bool dummy_creature; // true if the creature was created with the normal
                          // constructor instead of the getNewCreatureClass
-    const char LETTER;
-    const Type type_;
-    const Terrain *terrain_;
+  const char LETTER;
+  const Type type_;
+  
 };
 
 

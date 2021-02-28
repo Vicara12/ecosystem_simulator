@@ -14,7 +14,9 @@ Terrain::Terrain (unsigned width,
                   unsigned seed) :
         width_(width),
         height_(height),
-        terrain(width_, std::vector<gnd::Item>(height, gnd::Item::Grass))
+        terrain(width_, std::vector<gnd::Item>(height, gnd::Item::Grass)),
+        free_space(std::vector<std::vector<bool>>(width,
+                                                  std::vector<bool>(height, true)))
 {
     if (seed == unsigned(-1))
         nm::NoiseMap::setRandomSeed();
@@ -42,6 +44,7 @@ Terrain::Terrain (unsigned width,
                                        resolution,
                                        noise_map);
     
+    // set ground and water
     for (int j = 0; j < terrain[0].size(); j++)
     {
         for (int i = 0; i < terrain.size(); i++)
@@ -51,6 +54,7 @@ Terrain::Terrain (unsigned width,
         }
     }
 
+    // set trees
     for (int j = 0; j < terrain[0].size(); j++)
     {
         for (int i = 0; i < terrain.size(); i++)
@@ -220,7 +224,29 @@ void Terrain::generateCreatures (std::vector<std::pair<char,unsigned>> creatures
     }
 }
 
-bool Terrain::cellIsWalkable (unsigned x, unsigned y)
+
+bool Terrain::cellIsWalkable (unsigned x, unsigned y) const
 {
-    return terrain[x][y] == gnd::Item::Grass;
+    return terrain[x][y] == gnd::Item::Grass and free_space[x][y];
+}
+
+
+bool Terrain::placeCreature (unsigned x, unsigned y)
+{
+    if (not free_space[x][y])
+        return false;
+    
+    free_space[x][y] = false;
+    return true;
+}
+
+
+bool Terrain::moveCreature (gnd::Point old_p, gnd::Point new_p)
+{
+    if (free_space[old_p.x][old_p.y] or not free_space[new_p.x][new_p.y])
+        return false;
+    
+    free_space[old_p.x][old_p.y] = true;
+    free_space[new_p.x][new_p.y] = false;
+    return true;
 }
