@@ -2,7 +2,7 @@
 
 
 Fox::Fox () :
-    Creature('f')
+    Creature('f', 10) // default char and probability defined here
 {
     //
 }

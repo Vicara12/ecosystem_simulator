@@ -3,7 +3,7 @@
 
 
 Plant::Plant () :
-    Creature('p')
+    Creature('p', 50) // default char and probability defined here
 {
     //
 }

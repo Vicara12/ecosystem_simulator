@@ -2,7 +2,7 @@
 
 
 Bunny::Bunny () :
-    Creature('b')
+    Creature('b', 30) // default char and probability defined here
 {
     //
 }

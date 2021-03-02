@@ -22,7 +22,9 @@ class Creature
 {
 public:
 
+    // exceptions of the class
     struct DummyCreature;
+    struct NotDummyCreature;
 
 
     enum Type {Plant, Bunny, Fox};
@@ -30,7 +32,7 @@ public:
     // The constructur is only used to declare that a specific kind of creature
     // exists in the ecosystem simulator class, to get a new instance of a
     // creature the getNewCreatureMethod should be used instead
-    Creature (char letter);
+    Creature (char letter, uint probability);
 
     // If this method gets called from a dummy creature, an exception is raised
     virtual void actualize (unsigned long iteration) = 0;
@@ -44,6 +46,9 @@ public:
     Type getType () const;
 
     char getLetter () const;
+
+    // if 
+    uint getProbability () const;
 
     virtual ~Creature ();
 
@@ -72,11 +77,20 @@ private:
                          // constructor instead of the getNewCreatureClass
   const char LETTER;
   const Type type_;
+  uint prob; // indicates the density of creature generation of a given species
   
 };
 
 
+// method should not be called in dummy creature
 struct Creature::DummyCreature : public std::exception
+{
+  const char* what () const throw ();
+};
+
+
+// method should not be called in non dummy creature
+struct Creature::NotDummyCreature : public std::exception
 {
   const char* what () const throw ();
 };
