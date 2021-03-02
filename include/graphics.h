@@ -9,7 +9,6 @@
 #include <iostream>
 
 #include "terrain.h"
-#include "creature.h"
 
 
 class Graphics
@@ -18,7 +17,7 @@ public:
 
     Graphics (sf::RenderWindow &window, const Terrain &terrain);
 
-    void draw (const std::list<Creature*> &creatures);
+    void draw (const std::list<std::pair<char, gnd::Point>> &creatures);
 
     ~Graphics();
 

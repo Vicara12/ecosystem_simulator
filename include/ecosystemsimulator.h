@@ -4,7 +4,7 @@
 #include <list>
 #include <string>
 #include "terrain.h"
-#include "creature.h"
+#include "creaturecontroller.h"
 #include "ground.h"
 
 
@@ -30,13 +30,12 @@ private:
     void parseCreatures (const std::list<gnd::TerrainCreature> &unparsed_creatures);
 
 
-    std::list<Creature*> creatures;
     Terrain* terrain;
+    CreatureController *creatures;
 
     // terrain generation variables
     bool read_terrain_from_file;
     bool terrain_file_has_creatures;
-    std::vector<std::pair<Creature*, uint>> creature_types;
 
     unsigned map_height, map_width, map_complexity;
     unsigned map_qty_of_terrain, map_qty_of_trees, seed;

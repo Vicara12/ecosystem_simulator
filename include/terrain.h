@@ -37,18 +37,13 @@ public:
 
     gnd::Item getTileType (unsigned x, unsigned y) const;
 
-    // returns the creatures read from the file or generated at random
+    // returns the creatures read from the file
+    // this method should only be called when the class was generated with
+    // the load map from file constructor
     const std::list<gnd::TerrainCreature> getCreatures () const;
 
-    // generate random position for creatures
-    // Creature vector must contain pairs with the letter code and generation
-    // density for each criature (the higher the number, the more creatures
-    // of that type that will be generated)
-    // Low complexity values cause the creatures to generate in big groups,
-    // and greater values mean smaller different groups
-    void generateCreatures (std::vector<std::pair<char,unsigned>> creatures,
-                            unsigned complexity);
-    
+    bool terrainReadFromFile () const;
+
     // returns true if the selected cell is free
     bool cellIsWalkable (unsigned x, unsigned y) const;
 
@@ -62,10 +57,7 @@ public:
 
 private:
 
-    // returns true with a probability of chances
-    // (chances must be between 0 and 1)
-    bool randomBool (double chances);
-
+    bool terrain_read_from_file;
     unsigned width_, height_;
     gnd::Map terrain;
     std::list<gnd::TerrainCreature> creature_list;  // creatures found when

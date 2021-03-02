@@ -1,12 +1,13 @@
 #include "creature.h"
 
 
-Creature::Creature (char letter) :
+Creature::Creature (char letter, uint probability) :
     terrain_(NULL),
     position(0,0),
     dummy_creature(true),
     LETTER(letter),
-    type_(Type::Plant)
+    type_(Type::Plant),
+    prob(probability)
 {
     //
 }
@@ -38,6 +39,15 @@ Creature::Type Creature::getType () const
 }
 
 
+uint Creature::getProbability () const
+{
+    if (not dummy_creature)
+        throw new NotDummyCreature();
+    
+    return prob;
+}
+
+
 Creature::~Creature ()
 {
     //
@@ -60,6 +70,12 @@ char Creature::getLetter () const
 const char* Creature::DummyCreature::what () const throw ()
 {
     return "attempted to actualize a dummy creature";
+}
+
+
+const char* Creature::NotDummyCreature::what () const throw ()
+{
+    return "attempted to get probability of non dummy creature";
 }
 
 

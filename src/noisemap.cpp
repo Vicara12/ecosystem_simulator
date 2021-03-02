@@ -111,3 +111,9 @@ double nm::linearFade (double p1, double p2, double x)
 {
     return (p2-p1)*x + p1;
 }
+
+
+bool nm::randomBool (double chances)
+{
+    return double(rand())/RAND_MAX < chances;
+}

@@ -34,11 +34,11 @@ namespace gratr
 
     // map with the textures of all creatures
     // ADD TEXTURES FOR NEW CREATURES HERE
-    std::map<Creature::Type, EntityTexture> CREATURE_TEXTURES =
+    std::map<char, EntityTexture> CREATURE_TEXTURES =
     {
-        {Creature::Type::Plant, EntityTexture("./res/plant.png", 360, 360)},
-        {Creature::Type::Bunny, EntityTexture("./res/bunny.png", 474, 474)},
-        {Creature::Type::Fox,   EntityTexture("./res/fox.png",   474, 474)}
+        {'p', EntityTexture("./res/plant.png", 360, 360)},
+        {'b', EntityTexture("./res/bunny.png", 474, 474)},
+        {'f', EntityTexture("./res/fox.png",   474, 474)}
     };
 }
 
@@ -135,7 +135,7 @@ Graphics::Graphics (sf::RenderWindow &window, const Terrain &terrain) :
 }
 
 
-void Graphics::draw (const std::list<Creature*> &creatures)
+void Graphics::draw (const std::list<std::pair<char, gnd::Point>> &creatures)
 {
     window_.clear(gratr::BORDER_COLOR);
 
@@ -156,7 +156,7 @@ void Graphics::draw (const std::list<Creature*> &creatures)
     // draw creatures
     for (auto creature : creatures)
     {
-        const gratr::EntityTexture &et = gratr::CREATURE_TEXTURES[creature->getType()];
+        const gratr::EntityTexture &et = gratr::CREATURE_TEXTURES[creature.first];
 
         if (et.loaded)
         {
@@ -166,9 +166,9 @@ void Graphics::draw (const std::list<Creature*> &creatures)
             sprite.setTexture(et.texture, true);
         
             sprite.setPosition(sf::Vector2f(gratr::LATERAL_MARGIN +
-                                                creature->getPos().x*box_size,
+                                                creature.second.x*box_size,
                                             gratr::LATERAL_MARGIN +
-                                                creature->getPos().y*box_size));
+                                                creature.second.y*box_size));
             sprite.setScale(sf::Vector2f(scale_x, scale_y));
 
             window_.draw(sprite);
@@ -177,9 +177,9 @@ void Graphics::draw (const std::list<Creature*> &creatures)
         {
             auxiliar_shape.setFillColor(sf::Color::Black);
             auxiliar_shape.setPosition(sf::Vector2f(gratr::LATERAL_MARGIN +
-                                creature->getPos().x*box_size,
+                                creature.second.x*box_size,
                                     gratr::LATERAL_MARGIN +
-                                creature->getPos().y*box_size));
+                                creature.second.y*box_size));
             
             window_.draw(auxiliar_shape);
         }

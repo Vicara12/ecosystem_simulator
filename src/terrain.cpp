@@ -12,6 +12,7 @@ Terrain::Terrain (unsigned width,
                   unsigned qty_of_terrain,
                   unsigned qty_of_trees,
                   unsigned seed) :
+        terrain_read_from_file(false),
         width_(width),
         height_(height),
         terrain(width_, std::vector<gnd::Item>(height, gnd::Item::Grass)),
@@ -59,7 +60,7 @@ Terrain::Terrain (unsigned width,
     {
         for (int i = 0; i < terrain.size(); i++)
         {
-            if (randomBool((qty_of_trees/100.f)*noise_map[i][j]) and
+            if (nm::randomBool((qty_of_trees/100.f)*noise_map[i][j]) and
                     not isSand(i, j))
                 terrain[i][j] = gnd::Item::Tree;
         }
@@ -67,13 +68,8 @@ Terrain::Terrain (unsigned width,
 }
 
 
-bool Terrain::randomBool (double chances)
-{
-    return double(rand())/RAND_MAX < chances;
-}
-
-
-Terrain::Terrain (std::string terrain_source_file_path, bool creatures)
+Terrain::Terrain (std::string terrain_source_file_path, bool creatures) :
+        terrain_read_from_file(true)
 {
     // try to open file
     std::ifstream file(terrain_source_file_path, std::ios::binary);
@@ -184,47 +180,6 @@ const std::list<gnd::TerrainCreature> Terrain::getCreatures () const
 }
 
 
-void Terrain::generateCreatures (std::vector<std::pair<char,unsigned>> creatures,
-                                 unsigned complexity)
-{
-    creature_list.clear();
-
-    nm::NoiseMap perlin_noise_generator;
-    nm::Map noise_map;
-
-    unsigned resolution = (height_ > width_ ? height_ : width_) / complexity;
-    unsigned noise_map_width = (width_/resolution +
-                                (width_%resolution != 0));
-    unsigned noise_map_height = (height_/resolution +
-                                (height_%resolution != 0));
-    
-    std::vector<std::vector<bool>> cell_occupied(width_,
-                                                 std::vector<bool>(height_,false));
-
-    for (std::pair<char,double> creature : creatures)
-    {
-        // generate a new noise map for each creature type (because if just
-        // one were used, all animals would be near each other)
-        perlin_noise_generator.generateMap(noise_map_width, noise_map_height,
-                                           resolution, noise_map);
-        
-        for (int i = 0; i < terrain.size(); i++)
-        {
-            for (int j = 0; j < terrain[0].size(); j++)
-            {
-                if (cellIsWalkable(i, j) and not cell_occupied[i][j] and
-                    randomBool(noise_map[i][j]*(creature.second/100.f)))
-                {
-                    cell_occupied[i][j] = true;
-                    gnd::Point p(i,j);
-                    creature_list.push_back(gnd::TerrainCreature(p, creature.first));
-                }
-            }
-        }
-    }
-}
-
-
 bool Terrain::cellIsWalkable (unsigned x, unsigned y) const
 {
     return terrain[x][y] == gnd::Item::Grass and free_space[x][y];
@@ -249,4 +204,10 @@ bool Terrain::moveCreature (gnd::Point old_p, gnd::Point new_p)
     free_space[old_p.x][old_p.y] = true;
     free_space[new_p.x][new_p.y] = false;
     return true;
+}
+
+
+bool Terrain::terrainReadFromFile () const
+{
+    return terrain_read_from_file;
 }

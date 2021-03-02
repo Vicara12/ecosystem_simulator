@@ -10,6 +10,10 @@ namespace nm
     typedef std::pair<double, double> Dot;
     class NoiseMap;
 
+    // returns true with a probability of chances
+    // (chances must be between 0 and 1)
+    bool randomBool (double chances);
+
     double enhancedFade (double p1, double p2, double x);
     double linearFade   (double p1, double p2, double x);
 }
