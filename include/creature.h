@@ -32,10 +32,17 @@ public:
     // The constructur is only used to declare that a specific kind of creature
     // exists in the ecosystem simulator class, to get a new instance of a
     // creature the getNewCreatureMethod should be used instead
-    Creature (char letter, uint probability);
+    Creature (char letter, uint probability, uint sight_range);
 
     // If this method gets called from a dummy creature, an exception is raised
-    virtual void actualize (unsigned long iteration) = 0;
+    // It goes through an iteration of the creature's logic
+    virtual void actualize (unsigned long iteration,
+                            const std::list<Creature*> &nearby_c) = 0;
+
+    bool isDead () const;
+
+    // returns pointer to new creature if it reproduced or NULL otherwise
+    Creature* reproduced ();
 
     // get a real creature
     virtual Creature* getNewCreature (Terrain &terrain,
@@ -46,6 +53,8 @@ public:
     Type getType () const;
 
     char getLetter () const;
+
+    unsigned getSight () const;
 
     // if 
     uint getProbability () const;
@@ -58,7 +67,8 @@ protected:
     Creature (Terrain &terrain,
               Type type,
               gnd::Point initial_pos,
-              char letter);
+              char letter,
+              uint sight_range);
     
     bool changePos (gnd::Point new_p);
 
@@ -67,6 +77,10 @@ protected:
 
 
     Terrain *terrain_;
+    bool dead;
+    uint sight;
+    Creature *son; // when creature reproduces, the son is held here until
+                   // the reproduced method gets called
 
 
 private:

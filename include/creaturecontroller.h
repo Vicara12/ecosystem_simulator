@@ -29,6 +29,9 @@ public:
 
     void getCreatures (std::list<std::pair<char, gnd::Point>> &creature_p) const;
 
+    // returns true if there is at least one creature alive
+    bool actualizeCreatures (unsigned long iteration);
+
     ~CreatureController ();
 
 private:
@@ -36,11 +39,17 @@ private:
     // parse a creature read from the file
     void parseCreature (char letter, gnd::Point p);
 
-
     Terrain *terrain;
     std::vector<Creature*> creature_types;
     std::vector<uint> creature_probabilities;
-    std::list<Creature*> creatures;
+
+    // map is divided into nxn cells each one with a list of creatures that are
+    // inside of that cell
+    std::vector<std::vector<std::list<Creature*>>> cell;
+    const uint CELL_SIZE = 10;
+    unsigned max_creature_viewrange; // determines how many cells will be given
+                                     // to a creature when actualizing
+    unsigned n_creatures;
 };
 
 #endif
